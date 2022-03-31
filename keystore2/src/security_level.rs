@@ -36,7 +36,7 @@ use crate::utils::{
 use crate::{
     database::{
         BlobMetaData, BlobMetaEntry, DateTime, KeyEntry, KeyEntryLoadBits, KeyMetaData,
-        KeyMetaEntry, KeyType, SubComponentType, Uuid,
+        KeyMetaEntry, KeyType, Uuid,
     },
     operation::KeystoreOperation,
     operation::LoggingInfo,
@@ -811,12 +811,12 @@ impl KeystoreSecurityLevel {
     }
 
     fn store_upgraded_keyblob(
-        key_id_guard: KeyIdGuard,
+        _key_id_guard: KeyIdGuard,
         km_uuid: Option<Uuid>,
         key_blob: &KeyBlob,
         upgraded_blob: &[u8],
     ) -> Result<()> {
-        let (upgraded_blob_to_be_stored, new_blob_metadata) =
+        let (_upgraded_blob_to_be_stored, new_blob_metadata) =
             SuperKeyManager::reencrypt_if_required(key_blob, upgraded_blob)
                 .context(ks_err!("Failed to handle super encryption."))?;
 
@@ -824,7 +824,7 @@ impl KeystoreSecurityLevel {
         if let Some(uuid) = km_uuid {
             new_blob_metadata.add(BlobMetaEntry::KmUuid(uuid));
         }
-
+/*
         DB.with(|db| {
             let mut db = db.borrow_mut();
             db.set_blob(
@@ -835,8 +835,9 @@ impl KeystoreSecurityLevel {
             )
         })
         .context(ks_err!("Failed to insert upgraded blob into the database."))
+*/
+        Ok(())
     }
-
     fn upgrade_keyblob_if_required_with<T, F>(
         &self,
         km_dev: &dyn IKeyMintDevice,
